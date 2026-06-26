@@ -2,11 +2,9 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <!-- 适配手机端 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的静态网站 | GitHub Pages</title>
+    <title>文件目录首页</title>
     <style>
-        /* 内嵌CSS，无需额外css文件，开箱即用 */
         * {
             margin: 0;
             padding: 0;
@@ -14,53 +12,51 @@
             font-family: "Microsoft YaHei", sans-serif;
         }
         body {
-            background-color: #f5f7fa;
-            color: #333;
+            background: #f5f7fa;
             padding: 40px 20px;
         }
-        .container {
-            max-width: 900px;
+        .wrap {
+            max-width: 800px;
             margin: 0 auto;
             background: #fff;
-            padding: 50px;
+            padding: 40px;
             border-radius: 12px;
-            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
         }
         h1 {
             color: #2563eb;
-            margin-bottom: 20px;
             text-align: center;
+            margin-bottom: 30px;
         }
-        .desc {
-            font-size: 18px;
-            line-height: 1.8;
-            color: #555;
-            margin: 20px 0;
+        .tip {
+            color: #666;
             text-align: center;
+            margin-bottom: 30px;
         }
-        .box {
-            margin-top: 40px;
-            padding: 30px;
-            background: #eff6ff;
-            border-radius: 8px;
+        .file-list {
+            list-style: none;
         }
-        h3 {
-            margin-bottom: 15px;
-            color: #1d4ed8;
+        .file-list li {
+            border-bottom: 1px solid #eee;
         }
-        ul {
-            line-height: 2;
-            padding-left: 20px;
-        }
-        a {
-            color: #2563eb;
+        .file-list a {
+            display: block;
+            padding: 14px 16px;
+            color: #222;
             text-decoration: none;
+            transition: 0.2s;
         }
-        a:hover {
-            text-decoration: underline;
+        .file-list a:hover {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+        .empty {
+            text-align: center;
+            padding: 40px;
+            color: #999;
         }
         footer {
-            margin-top: 50px;
+            margin-top: 40px;
             text-align: center;
             color: #888;
             font-size: 14px;
@@ -68,37 +64,45 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>欢迎访问我的静态站点</h1>
-        <p class="desc">本网站托管于 GitHub Pages，纯静态 HTML/CSS/JS，全网公开访问，自动HTTPS加密</p>
+<div class="wrap">
+    <h1>站点 HTML 文件导航</h1>
+    <p class="tip">当前目录下所有页面文件</p>
 
-        <div class="box">
-            <h3>功能说明</h3>
-            <ul>
-                <li>支持完整 HTML、CSS、JavaScript 运行</li>
-                <li>图片、样式、交互脚本全部正常加载</li>
-                <li>无需服务器、无需备案、永久免费</li>
-                <li>支持绑定自定义域名</li>
-                <li>任何人打开链接即可浏览，无需登录</li>
-            </ul>
-        </div>
+    <ul class="file-list" id="list"></ul>
 
-        <div class="box">
-            <h3>测试链接示例</h3>
-            <p>跳转测试：<a href="https://github.com" target="_blank">访问GitHub官网</a></p>
-        </div>
+    <footer>
+        Powered by GitHub Pages
+    </footer>
+</div>
 
-        <!-- 这里可以写你的JS代码 -->
-        <script>
-            // 简单JS示例：页面加载弹窗提示
-            window.onload = function() {
-                console.log("页面加载完成，JS正常运行");
-            }
-        </script>
+<script>
+// 1. 这里填写你所有 html 文件名，新增页面只需在这里追加
+const htmlFiles = [
+    "index.html",
+    "demo1.html",
+    "demo2.html",
+    "about.html",
+    "test.html"
+];
 
-        <footer>
-            Powered by GitHub Pages · 静态网站演示
-        </footer>
-    </div>
+const listEl = document.getElementById("list");
+
+// 过滤掉自身 index.html，只展示其他页面
+const otherPages = htmlFiles.filter(name => name !== "index.html");
+
+if (otherPages.length === 0) {
+    listEl.innerHTML = '<li class="empty">暂无其他HTML页面</li>';
+} else {
+    otherPages.forEach(filename => {
+        const li = document.createElement("li");
+        const a = document.createElement("a");
+        a.href = filename;
+        a.textContent = filename;
+        a.target = "_blank"; // 新标签打开
+        li.appendChild(a);
+        listEl.appendChild(li);
+    });
+}
+</script>
 </body>
 </html>
