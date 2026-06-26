@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Non-individual车贷项目双周会汇报看板</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            600: '#1e40af',
+                            700: '#1d4ed8',
+                            800: '#1e3a8a',
+                            900: '#0f172a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap');
+        body { font-family: 'Inter', 'Noto Sans SC', sans-serif; }
+        .tab-active { background-color: #1e40af !important; color: #ffffff !important; box-shadow: 0 2px 4px rgba(30, 64, 175, 0.2); }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- 顶部导航条 -->
+    <header class="bg-gradient-to-r from-brand-900 to-brand-800 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-blue-600 p-1.5 rounded text-white flex items-center justify-center shadow-inner">
+                    <i class="fa-solid fa-car-side text-sm"></i>
+                </div>
+                <div>
+                    <h1 class="text-sm font-bold tracking-wide">Non-individual车贷项目 管理看板</h1>
+                    <p class="text-[10px] text-slate-300">报告单位：Non-individual项目组 | 汇报日期: 2026-06-17</p>
+                </div>
+            </div>
+            <span class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 text-[10px] font-medium border border-blue-500/30 animate-pulse">
+                首次双周会里程碑基线
+            </span>
+        </div>
+    </header>
+
+    <!-- 主体内容 -->
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 py-6">
+
+        <!-- 核心摘要卡 (4卡片自适应布局) -->
+        <section class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 text-center">
+            <div class="bg-white p-3 rounded shadow-sm border border-slate-200">
+                <span class="text-xs text-slate-400 block">拟定范围边界确认</span>
+                <span class="text-lg font-bold text-blue-600 mt-1 block">6月22日 拟定</span>
+                <span class="text-[10px] text-slate-400">对标Individual B1&B2</span>
+            </div>
+            <div class="bg-white p-3 rounded shadow-sm border border-slate-200">
+                <span class="text-xs text-slate-400 block">业务需求目标定稿</span>
+                <span class="text-lg font-bold text-emerald-600 mt-1 block">6月30日 目标</span>
+                <span class="text-[10px] text-slate-400">完整需求梳理与澄清</span>
+            </div>
+            <div class="bg-white p-3 rounded shadow-sm border border-slate-200">
+                <span class="text-xs text-slate-400 block">核心交付窗口</span>
+                <span class="text-lg font-bold text-indigo-600 mt-1 block">11月 交付投产</span>
+                <span class="text-[10px] text-slate-400">各阶段时间节点极限压缩</span>
+            </div>
+            <div class="bg-white p-3 rounded shadow-sm border border-slate-200">
+                <span class="text-xs text-slate-400 block">项目最高风险级别</span>
+                <span class="text-lg font-bold text-rose-600 mt-1 block">High 高风险</span>
+                <span class="text-[10px] text-slate-400">排期极度紧凑存在不确定性</span>
+            </div>
+        </section>
+
+        <!-- Tab 切换菜单 (4 Tabs) -->
+        <div class="border-b border-slate-200 mb-6 bg-white rounded p-1 flex flex-wrap gap-1 shadow-sm">
+            <button onclick="switchTab('scope')" id="btn-scope" class="tab-btn px-4 py-1.5 text-xs font-semibold rounded transition-all tab-active">
+                <i class="fa-solid fa-sliders mr-1.5"></i> 1. Non-Individual 拟定项目范围
+            </button>
+            <button onclick="switchTab('timeline')" id="btn-timeline" class="tab-btn px-4 py-1.5 text-xs font-semibold rounded transition-all text-slate-600">
+                <i class="fa-solid fa-calendar-days mr-1.5"></i> 2. 项目主体计划与甘特排期
+            </button>
+            <button onclick="switchTab('roster')" id="btn-roster" class="tab-btn px-4 py-1.5 text-xs font-semibold rounded transition-all text-slate-600">
+                <i class="fa-solid fa-users mr-1.5"></i> 3. 项目成员分工与团队承载
+            </button>
+            <button onclick="switchTab('progress')" id="btn-progress" class="tab-btn px-4 py-1.5 text-xs font-semibold rounded transition-all text-slate-600">
+                <i class="fa-solid fa-chart-line mr-1.5 text-blue-600"></i> 4. 双周进展、下周计划与风险
+            </button>
+        </div>
+
+        <!-- 1. 项目范围 TAB -->
+        <div id="tab-scope" class="tab-content block space-y-4">
+            <div class="bg-white p-4 rounded shadow-sm border border-slate-200">
+                <div class="flex items-center justify-between border-b pb-2 mb-3">
+                    <h3 class="font-bold text-slate-800 text-xs flex items-center">
+                        <span class="w-1 h-3 bg-blue-600 rounded-sm mr-1.5 inline-block"></span>
+                        PROJECT SCOPE DEFINITION：Non-Individual 对标 Individual 的 B1 & B2 范围全景图
+                    </h3>
+                    <span class="text-[10px] text-slate-400">注：灰色底纹代表暂不包含或复用基础模块</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-slate-100 text-[11px]">
+                        <thead class="bg-slate-50 text-slate-500 sticky top-0">
+                            <tr>
+                                <th class="px-3 py-2 text-left font-semibold w-24">大类</th>
+                                <th class="px-3 py-2 text-left font-semibold w-28">子类</th>
+                                <th class="px-3 py-2 text-left font-semibold">Individual（B1 & B2）参考线</th>
+                                <th class="px-3 py-2 text-left font-semibold bg-blue-50/50 text-blue-900">Non-Individual 拟定范围改造点</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr>
+                                <td class="px-3 py-2 font-semibold text-slate-800" rowspan="3">产品形态</td>
+                                <td class="px-3 py-2 font-medium text-slate-700">人群</td>
+                                <td class="px-3 py-2 text-slate-600">Conventional / Islamic</td>
+                                <td class="px-3 py-2 bg-blue-50/20 text-slate-700">Conventional / Islamic</td>
+                            </tr>
+                            <tr>
+                                <td class="px-3 py-2 font-medium text-slate-700">产品组群</td>
+                                <td class="px-3 py-2 text-slate-600">HP、IHP、FPH</td>
+                                <td class="px-3 py-2 bg-blue-50/20 text-slate-800 font-medium">HP、IHP、Fleet Purchase、HP line</td>
+                            </tr>
+                            <tr>
+                                <td class="px-3 py-2 font-medium text-slate-700">车辆类型</td>
+                                <td class="px-3 py-2 text-slate-600">新车、二手车、平行进口车</td>
+                                <td class="px-3 py-2 bg-blue-50/20 text-slate-700">新车、二手车、平行进口车</td>
+                            </tr>
+                            <tr class="border-t-2 border-slate-200">
+                                <td class="px-3 py-2.5 font-semibold text-slate-800" rowspan="11">功能流程</td>
+                                <td class="px-3 py-2 font-medium text-slate-700">进件</td>
+                                <td class="px-3 py-2 text-slate-500">主申请人、担保人、CILT、Renew LOU</td>
+                                <td class="px-3 py-2 bg-blue-50/20 text-blue-950 font-medium">主申请人、担保人、Owner、Non-Guarantor、调整车型库、金融产品类型、股权结构（集成益博睿API及交互展示）、CILT、Renew LOU</td>
+                            </tr>
+                            <tr>
+                                <td class="px-3 py-2 font-medium text-blue-800 bg-blue-50/30">风险（重点模块）</td>
+                                <td class="px-3 py-2 text-slate-500">STP：HP、AML、UW</td>
+                                <td class="px-3 py-2 bg-blue-50/50 text-slate-900 space-y-1">
+                                    <div class="font-semibold text-blue-700">1. 风险流程：</div><div class="pl-2 text-slate-700">流程变化、外查数据角色调整，查询主键调整</div>
+                                    <div class="font-semibold text-blue-700 mt-1">2. 风险引擎：</div><div class="pl-2 text-slate-700">信用、反欺诈、CED预警引擎入参变化及策略调整</div>
+                                    <div class="font-semibold text-blue-700 mt-1">3. 风险系统界面：</div><div class="pl-2 text-slate-700">客户、驾驶证、地址、TV check、拒绝和重复申请记录、Decision等信息界面调整</div>
+                                    <div class="font-semibold text-blue-700 mt-1">4. 计算逻辑：</div><div class="pl-2 text-slate-700 font-medium">Income & Exposure计算逻辑和设置变化</div>
+                                    <div class="font-semibold text-blue-700 mt-1">5. 日志：</div><div class="pl-2 text-slate-700">各类Log适配NI</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-3 py-2 font-medium text-slate-700">签约</td>
+                                <td class="px-3 py-2 text-slate-500">人工线上电子文书（B2完成度40/85份）</td>
+                                <td class="px-3 py-2 bg-blue-50/20 text-slate-800 font-medium">人工文书（100+份NI文书）</td>
+                            </tr>
+                            <tr>
+                                <td class="px-3 py-2 font-medium text-slate-700">放款</td>
+                                <td class="px-3 py-2 text-slate-400 bg-slate-50">车商、个人账户...</td>
+                                <td class="px-3 py-2 bg-slate-50/80 text-slate-500">复用HP基础上增加NI特性</td>
+                            </tr>
+                            <tr>
+                                <td class="px-3 py-2 font-medium text-slate-700">权限</td>
+                                <td class="px-3 py-2 text-slate-400 bg-slate-50">Sales、CED、FMU、CRA</td>
+                                <td class="px-3 py-2 bg-slate-50/80 text-slate-500">复用HP</td>
+                            </tr>
+                            <tr>
+                                <td class="px-3 py-2 font-medium text-slate-700">报表</td>
+                                <td class="px-3 py-2 text-slate-400 bg-slate-50">Fraud反欺诈报表、CRA报表、CED报表</td>
+                                <td class="px-3 py-2 bg-slate-50/80 text-slate-600 font-medium">增加NI特性报表</td>
+                            </tr>
+                            <tr>
+                                <td class="px-3 py-2 font-medium text-slate-700">OCR</td>
+                                <td class="px-3 py-2 text-slate-500">Sales：22+类文书、CRA：30类文书</td>
+                                <td class="px-3 py-2 bg-blue-50/20 text-slate-800 font-medium">增加10+类NI文书</td>
+                            </tr>
+                            <tr>
+                                <td class="px-3 py-2 font-medium text-slate-700">车商管理</td>
+                                <td class="px-3 py-2 text-slate-400 bg-slate-50">准入、新增、修改</td>
+                                <td class="px-3 py-2 bg-blue-50/20 text-slate-700"></td>
+                            </tr>
+                            <tr>
+                                <td class="px-3 py-2 font-medium text-slate-700">对接API</td>
+                                <td class="px-3 py-2 text-slate-400 bg-slate-50">对接车商、对接平台</td>
+                                <td class="px-3 py-2 bg-blue-50/20 text-slate-700"></td>
+                            </tr>                            
+                            <tr>
+                                <td class="px-3 py-2 font-medium text-slate-700">审计</td>
+                                <td class="px-3 py-2 text-slate-400 bg-slate-50">各类log</td>
+                                <td class="px-3 py-2 bg-blue-50/20 text-slate-800 font-medium">增加UBO股权关联方变更记录</td>
+                            </tr>
+                            <tr>
+                                <td class="px-3 py-2 font-medium text-slate-700">监管报送</td>
+                                <td class="px-3 py-2 text-slate-400 bg-slate-50">--</td>
+                                <td class="px-3 py-2 bg-blue-50/20 text-slate-800 font-medium">增加企业申请车辆类型、使用标签、贷款目的等</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. 里程碑计划 TAB -->
+        <div id="tab-timeline" class="tab-content hidden space-y-4">
+            <div class="bg-white p-4 rounded shadow-sm border border-slate-200">
+                <div class="border-b pb-2 mb-3">
+                    <h3 class="font-bold text-slate-800 text-xs flex items-center">
+                        <span class="w-1 h-3 bg-blue-600 rounded-sm mr-1.5 inline-block"></span>
+                        项目主体里程碑节点排期 (Draft Project Timeline)
+                    </h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-slate-100 text-xs">
+                        <thead class="bg-slate-50 text-slate-500">
+                            <tr>
+                                <th class="px-3 py-2 text-left font-semibold">项目执行阶段</th>
+                                <th class="px-3 py-2 text-left font-semibold">计划时间窗口</th>
+                                <th class="px-3 py-2 text-left font-semibold">核心任务边界及目标要求</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-[11px]">
+                            <tr>
+                                <td class="px-3 py-2.5 font-semibold text-slate-800">Phase 01 需求与方案评审</td>
+                                <td class="px-3 py-2.5 text-blue-700 font-medium">2026/06/01 — 2026/06/30</td>
+                                <td class="px-3 py-2.5 text-slate-600">进行完整需求梳理、澄清与评审、技术方案设计及系统架构最终设计敲定。<strong class="text-slate-800">拟定于6月22日确定需求范围，6月30日形成需求定稿。</strong></td>
+                            </tr>
+                            <tr>
+                                <td class="px-3 py-2.5 font-semibold text-slate-800">Phase 02 系统功能研发</td>
+                                <td class="px-3 py-2.5 text-slate-700 font-medium">2026/07/01 — 2026/08/15</td>
+                                <td class="px-3 py-2.5 text-slate-600">各系统功能模块同步展开高并发高内聚代码开发与编码、多方接口联调。</td>
+                            </tr>
+                            <tr>
+                                <td class="px-3 py-2.5 font-semibold text-slate-800">Phase 03 SIT测试阶段</td>
+                                <td class="px-3 py-2.5 text-slate-700 font-medium">2026/08/01 — 2026/08/31</td>
+                                <td class="px-3 py-2.5 text-slate-600">严格执行SIT全面集成测试，确保核心业务全路径联通及风控阻断生效。</td>
+                            </tr>
+                            <tr>
+                                <td class="px-3 py-2.5 font-semibold text-slate-800">Phase 04 UAT及非功能测试</td>
+                                <td class="px-3 py-2.5 text-slate-700 font-medium">2026/09/01 — 2026/10/31</td>
+                                <td class="px-3 py-2.5 text-slate-600">严格组织执行UAT多场景全面回归测试、开展端到端高负荷压力测试评估。</td>
+                            </tr>
+                            <tr>
+                                <td class="px-3 py-2.5 font-semibold text-slate-800">Phase 05 交付投产上线</td>
+                                <td class="px-3 py-2.5 text-emerald-700 font-medium">2026/11/01 — 2026/11/30</td>
+                                <td class="px-3 py-2.5 text-slate-600">全面执行系统安全及合规性扫描；上线割接准备与生产发布验证，最终实现全面正式投产。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 甘特图可视化 -->
+            <div class="bg-white p-4 rounded shadow-sm border border-slate-200 mt-4">
+                <div class="border-b pb-2 mb-3">
+                    <h3 class="font-bold text-slate-800 text-xs flex items-center">
+                        <span class="w-1 h-3 bg-indigo-600 rounded-sm mr-1.5 inline-block"></span>
+                        📅 Non-individual车贷专项 2026年度高精压缩施工进度图
+                    </h3>
+                </div>
+                <div class="overflow-x-auto border border-slate-100 rounded">
+                    <div class="min-w-[800px] p-2 bg-slate-50/50">
+                        <div class="relative py-1.5 border-b border-slate-200 text-center font-semibold text-slate-400 text-[10px]" style="display: grid; grid-template-columns: 180px repeat(6, minmax(0, 1fr));">
+                            <div class="text-left pl-2 text-slate-500 font-bold">任务执行阶段</div>
+                            <div>6月</div><div>7月</div><div>8月</div><div>9月</div><div>10月</div><div>11月</div>
+                        </div>
+                        <div class="relative py-2 border-b border-slate-100" style="display: grid; grid-template-columns: 180px repeat(6, minmax(0, 1fr));">
+                            <div class="pl-2 text-[11px] font-medium text-slate-700">01. 需求与方案评审</div>
+                            <div class="col-span-6 relative flex items-center h-5">
+                                <div class="absolute h-3.5 rounded bg-blue-600 text-[9px] text-white flex items-center pl-2" style="left: 0%; width: 16.66%;">06/01 - 06/30</div>
+                            </div>
+                        </div>
+                        <div class="relative py-2 border-b border-slate-100" style="display: grid; grid-template-columns: 180px repeat(6, minmax(0, 1fr));">
+                            <div class="pl-2 text-[11px] font-medium text-slate-700">02. 系统功能研发</div>
+                            <div class="col-span-6 relative flex items-center h-5">
+                                <div class="absolute h-3.5 rounded bg-blue-500 text-[9px] text-white flex items-center pl-2" style="left: 16.66%; width: 25%;">07/01 - 08/15</div>
+                            </div>
+                        </div>
+                        <div class="relative py-2 border-b border-slate-100" style="display: grid; grid-template-columns: 180px repeat(6, minmax(0, 1fr));">
+                            <div class="pl-2 text-[11px] font-medium text-slate-700">03. SIT测试阶段</div>
+                            <div class="col-span-6 relative flex items-center h-5">
+                                <div class="absolute h-3.5 rounded bg-amber-500 text-[9px] text-white flex items-center pl-2" style="left: 33.33%; width: 16.66%;">08/01 - 08/31</div>
+                            </div>
+                        </div>
+                        <div class="relative py-2 border-b border-slate-100" style="display: grid; grid-template-columns: 180px repeat(6, minmax(0, 1fr));">
+                            <div class="pl-2 text-[11px] font-medium text-slate-700">04. UAT及非功能测试</div>
+                            <div class="col-span-6 relative flex items-center h-5">
+                                <div class="absolute h-3.5 rounded bg-indigo-500 text-[9px] text-white flex items-center pl-2" style="left: 50%; width: 33.33%;">09/01 - 10/31</div>
+                            </div>
+                        </div>
+                        <div class="relative py-2 border-b border-slate-100" style="display: grid; grid-template-columns: 180px repeat(6, minmax(0, 1fr));">
+                            <div class="pl-2 text-[11px] font-medium text-slate-700">05. 交付投产上线</div>
+                            <div class="col-span-6 relative flex items-center h-5">
+                                <div class="absolute h-3.5 rounded bg-emerald-600 text-[9px] text-white flex items-center pl-2" style="left: 83.33%; width: 16.66%;">11/01 - 11/30</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. 项目成员与分工 TAB -->
+        <div id="tab-roster" class="tab-content hidden space-y-4">
+            <div class="bg-white p-4 rounded shadow-sm border border-slate-200">
+                <div class="flex items-center justify-between border-b pb-2 mb-3">
+                    <h3 class="font-bold text-slate-800 text-xs flex items-center">
+                        <span class="w-1.5 h-3 bg-blue-600 rounded-sm mr-1.5 inline-block"></span>
+                        TEAM ROSTER & RACI ARCHITECTURE：项目组织架构、资源矩阵与交付映射
+                    </h3>
+                    <span class="text-[10px] text-blue-600 font-semibold bg-blue-50 px-2 py-0.5 rounded border border-blue-100">
+                        高亮蓝色背景：可 100% 投入核心成员
+                    </span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-slate-100 text-xs">
+                        <thead class="bg-slate-50 text-slate-500">
+                            <tr>
+                                <th class="px-3 py-2 text-left font-semibold">核心模块 / 职责领域</th>
+                                <th class="px-3 py-2 text-left font-semibold">负责人 (Owner)</th>
+                                <th class="px-3 py-2 text-left font-semibold">项目核心团队成员</th>
+                                <th class="px-3 py-2 text-left font-semibold">关键硬核交付物与管控备注</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-[11px]">
+                            <tr class="bg-blue-50/30">
+                                <td class="px-3 py-3 font-semibold text-slate-800">项目统筹协调</td>
+                                <td class="px-3 py-3 font-medium text-blue-700">李一丹</td>
+                                <td class="px-3 py-3 text-slate-400">--</td>
+                                <td class="px-3 py-3 text-slate-600">项目整体主体WBS计划、周例会/双周例会稳健流转机制、项目全局风险矩阵跟进追踪</td>
+                            </tr>
+                            <tr>
+                                <td class="px-3 py-3 font-semibold text-slate-800">业务产品经理</td>
+                                <td class="px-3 py-3 font-medium text-slate-800">任晓宇、李斌、张皓</td>
+                                <td class="px-3 py-3 text-slate-600">模块细分：任晓宇（签约/文书/OCR）、李斌（进件）、张皓（放款）</td>
+                                <td class="px-3 py-3 text-slate-600">全流程业务需求说明书、交互原型设计图交付</td>
+                            </tr>
+                            <tr>
+                                <td class="px-3 py-3 font-semibold text-slate-800">风险产品经理</td>
+                                <td class="px-3 py-3 font-medium text-slate-800">谢绍恒、肖力</td>
+                                <td class="px-3 py-3 text-slate-400">--</td>
+                                <td class="px-3 py-3 text-slate-600">专门负责NI风控流程、风控引擎入参配置及Income计算逻辑定义</td>
+                            </tr>
+                            <tr class="bg-blue-50/30">
+                                <td class="px-3 py-3 font-semibold text-slate-800">科技产品经理</td>
+                                <td class="px-3 py-3 font-medium text-blue-700">李一丹、张文</td>
+                                <td class="px-3 py-3 text-slate-400">--</td>
+                                <td class="px-3 py-3 text-slate-600">对接研发资源调度，专门对齐Exposure计算逻辑及参数化改造落地</td>
+                            </tr>
+                            <tr>
+                                <td class="px-3 py-3 font-semibold text-slate-800">系统架构与研发落地</td>
+                                <td class="px-3 py-3 font-medium text-slate-900">
+                                    <div class="text-blue-700">田娟 (前端 Lead)</div>
+                                    <div class="text-blue-700 mt-0.5">付勇 (后端 Lead)</div>
+                                </td>
+                                <td class="px-3 py-3 text-slate-700 leading-relaxed">
+                                    <strong>前端 (4人)：</strong>ellaguo(郭研苹); summerwang(王浩); v_mingxianlai(赖明贤); v_yuhuige(葛雨慧)<br>
+                                    <strong class="block mt-1">后端 (10人)：</strong>felixxliu(刘福龙); giawang(王宇佳); kaenfan(范恒旭); kuanzhou(周宽); roryyi(易彤); shuailiu(刘帅); v_xueminxiao(肖学敏); v_yingchengwang(王英成); v_wcyanxu(许焱); v_jiazhaohan(韩佳钊)
+                                </td>
+                                <td class="px-3 py-3 text-slate-600 leading-relaxed">
+                                    系统全功能技术方案设计书、核心代码源、标准API规范。<br>
+                                    <span class="text-slate-400 block mt-1 font-normal">※ 备注：放款模块及配套由张骏团队承接负责；OCR由王勋彦团队承接负责。</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-3 py-3 font-semibold text-slate-800">测试与质量流程保证</td>
+                                <td class="px-3 py-3 font-medium text-blue-700">吴员英 (QA)</td>
+                                <td class="px-3 py-3 text-slate-600 leading-relaxed">
+                                    <strong>测试团队 (6人)：</strong><br>jenniwei(韦日珍); chuckcao(曹钰坤); leili(李磊); tinyyang(杨喜红); v_kangyi(易康); v_wclinmai(麦琳)
+                                </td>
+                                <td class="px-3 py-3 text-slate-600">法人全场景集成测试用例库建设、SIT系统集成测试报告与UAT退出报告编制</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. 双周进展、计划与风险 TAB -->
+        <div id="tab-progress" class="tab-content hidden space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                
+                <!-- 本周工作进展 -->
+                <div class="bg-white p-4 rounded shadow-sm border border-slate-200 border-l-4 border-l-blue-600">
+                    <h3 class="font-bold text-blue-800 text-xs border-b pb-2 mb-3 flex items-center">
+                        <i class="fa-solid fa-square-check text-blue-600 mr-1.5 text-sm"></i>
+                        ■ 本周工作进展 (Current Week Progress)
+                    </h3>
+                    <ul class="space-y-2.5 text-[11px] text-slate-600 leading-relaxed">
+                        <li class="flex items-start">
+                            <span class="text-blue-500 mr-1.5">•</span>
+                            <div><strong>团队组织构建：</strong> 成功建立专门企微专项工作群，完成核心产品经理、多模块研发、QA测试人员的无缝拉通与组织对齐。</div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-blue-500 mr-1.5">•</span>
+                            <div><strong>首期需求讨论：</strong> 顺利完成 Non-individual 进件业务流和风控模块需求初稿的首期讨论，产品需求及宏观流程初步成型。</div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-blue-500 mr-1.5">•</span>
+                            <div><strong>基线大盘梳理：</strong> 梳理完成 Non-individual 车贷业务一期核心改造范围边界，同时拟定输出首版项目主体里程碑计划初稿。</div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-blue-500 mr-1.5">•</span>
+                            <div><strong>风控干系方拉通：</strong> 高效协同 HLB CED、Policy（风险政策）以及 FMU（欺诈管理部）等核心关键干系方，完成法人专项风险流程与系统关键设置方案的底层沟通与对齐，同步草拟初版风险需求。</div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-blue-500 mr-1.5">•</span>
+                            <div><strong>依赖解耦拆分：</strong> 强力推进法人与 Individual 基础功能的深度解耦拆分，全量提取主流程与特定分支流程，形成待客户决策确认的问题矩阵。</div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-blue-500 mr-1.5">•</span>
+                            <div><strong>代码技术交接：</strong> 组织开发团队分头熟悉各业务子系统，快速建立对 batch1 底层资产的大致认知；同步全面推动各开发同学抓紧将手上存量并线任务交接出去。</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 下周工作计划 -->
+                <div class="bg-white p-4 rounded shadow-sm border border-slate-200 border-l-4 border-l-emerald-600">
+                    <h3 class="font-bold text-emerald-800 text-xs border-b pb-2 mb-3 flex items-center">
+                        <i class="fa-solid fa-paper-plane text-emerald-600 mr-1.5 text-sm"></i>
+                        ■ 下周工作计划 (Next Week Action Items)
+                    </h3>
+                    <ul class="space-y-3 text-[11px] text-slate-600 leading-relaxed">
+                        <li class="flex items-start">
+                            <span class="text-emerald-500 mr-1.5">1.</span>
+                            <div><strong>计划基线确认：</strong> 持续细化更深层 WBS 计划基线，正式输出终版项目主排期里程碑及核心质控节点，提请项目领导小组进行决策确认。</div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-emerald-500 mr-1.5">2.</span>
+                            <div><strong>产品需求攻坚（产品团队牵头）：</strong>
+                                <div class="pl-2 mt-1 text-slate-500 border-l-2 border-slate-200 space-y-1">
+                                    <div>• 持续完善、高细度细化并正式输出风险控制需求；组织客户全面评审 NI 业务需求，全力锁死需求业务边界。</div>
+                                    <div>• 紧密跟进、积极配合并补充 Income（收入评估）与 Exposure（风险敞口）的核心计算逻辑及底层参数设置需求。</div>
+                                    <div>• 分别在子模块层面闭环确认进件、OCR文书、签约、CRA（信用评级）的具体细分需求。</div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-emerald-500 mr-1.5">3.</span>
+                            <div><strong>技术分工下沉：</strong> 科技开发团队全面启动核心技术方案设计，正式输出初步的子平台功能任务细分清单与责任矩阵，确保后续颗粒度精确到按人按日追踪。</div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-emerald-500 mr-1.5">4.</span>
+                            <div><strong>接口接入调研：</strong> 全面启动与行内各关联子系统、行外合作外部机构的技术接口规范深度调研，尽快锁定并固化标准技术接口定义文档 (API Mapping)。</div>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <!-- 项目风险与问题 -->
+            <div class="bg-white p-4 rounded shadow-sm border border-slate-200 mt-4">
+                <div class="border-b pb-2 mb-3">
+                    <h3 class="font-bold text-slate-800 text-xs flex items-center">
+                        <span class="w-1.5 h-3 bg-rose-600 rounded-sm mr-1.5 inline-block"></span>
+                        ⚠️ 项目当前面临的核心风险与隐患识别矩阵 (Risks & Issues)
+                    </h3>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                    <div class="bg-rose-50/50 p-3 rounded border-l-4 border-rose-600 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between font-bold text-slate-800 text-[11px]">
+                                <span>1. 时间节点与需求边界不确定风险</span>
+                                <span class="px-1.5 py-0.5 text-[9px] rounded bg-rose-600 text-white font-bold">高 (High)</span>
+                            </div>
+                            <p class="text-slate-600 text-[11px] mt-2 leading-relaxed">
+                                <strong>风险描述：</strong>当前项目各阶段的时间节点均已按照上限进行了极限压缩，但目前整体需求范围及关键控制点的确认仍在客户侧流转，若客户确认延期，极易引发后续排期系统性连锁整体滑坡。
+                            </p>
+                        </div>
+                    </div>
+                    <div class="bg-amber-50/40 p-3 rounded border-l-4 border-amber-500 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between font-bold text-slate-800 text-[11px]">
+                                <span>2. 产品需求与业务流程待深度细化</span>
+                                <span class="px-1.5 py-0.5 text-[9px] rounded bg-amber-500 text-white font-bold">中 (Med)</span>
+                            </div>
+                            <p class="text-slate-600 text-[11px] mt-2 leading-relaxed">
+                                <strong>风险描述：</strong>虽然目前对公法人车贷的需求流程已初步建立起整体框架模型，但由于涉及复杂的企业准入资质及外部益博睿API集成交互，在底层细化至微观交互层面仍有大量工作待与业务对齐。
+                            </p>
+                        </div>
+                    </div>
+                    <div class="bg-amber-50/40 p-3 rounded border-l-4 border-amber-500 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between font-bold text-slate-800 text-[11px]">
+                                <span>3. 科技核心人力资源紧张、配给不足</span>
+                                <span class="px-1.5 py-0.5 text-[9px] rounded bg-amber-500 text-white font-bold">中 (Med)</span>
+                            </div>
+                            <p class="text-slate-600 text-[11px] mt-2 leading-relaxed">
+                                <strong>风险描述：</strong>对公场景中改造广度极大，而目前部分科技开发骨干人力仍在交接或受并线存量项目占用，目前实际可100%投入的人手偏紧，可能对开发初期的吞吐量构成局部阻碍。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-slate-950 text-slate-400 py-3.5 border-t border-slate-800 mt-8">
+        <div class="max-w-6xl mx-auto px-4 text-center text-[10px] space-y-1">
+            <p class="font-mono tracking-wider text-slate-500">Proprietary & Confidential ©2025 WeBank Technology Services Limited. All rights reserved.</p>
+            <p class="text-slate-600">基于 260617 Non-individual车贷项目双周会汇报_v0.2 真实源数据及 WTS 科技子合规基线完全体无损编译</p>
+        </div>
+    </footer>
+
+    <!-- Tab 切换控制逻辑 -->
+    <script>
+        function switchTab(tabId) {
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => { content.classList.add('hidden'); content.classList.remove('block'); });
+            const selectedContent = document.getElementById('tab-' + tabId);
+            if (selectedContent) { selectedContent.classList.remove('hidden'); selectedContent.classList.add('block'); }
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => { btn.classList.remove('tab-active'); btn.classList.add('text-slate-600'); });
+            const activeBtn = document.getElementById('btn-' + tabId);
+            if (activeBtn) { activeBtn.classList.add('tab-active'); activeBtn.classList.remove('text-slate-600'); }
+        }
+    </script>
+</body>
+</html>
