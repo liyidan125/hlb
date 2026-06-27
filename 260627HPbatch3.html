@@ -79,7 +79,7 @@
                 <i class="fa-solid fa-sliders mr-1.5"></i> 1. HP Individual-Batch3 拟定项目范围
             </button>
             <button onclick="switchTab('timeline')" id="btn-timeline" class="tab-btn px-4 py-1.5 text-xs font-semibold rounded transition-all text-slate-600">
-                <i class="fa-solid fa-calendar-days mr-1.5"></i> 2. 项目主体计划与甘特排期
+                <i class="fa-solid fa-calendar-days mr-1.5"></i> 2. 项目原计划及甘特图（新计划待定）
             </button>
             <button onclick="switchTab('roster')" id="btn-roster" class="tab-btn px-4 py-1.5 text-xs font-semibold rounded transition-all text-slate-600">
                 <i class="fa-solid fa-users mr-1.5"></i>3. 项目成员分工与团队承载
@@ -131,7 +131,7 @@
                                 <td class="px-3 py-2.5 font-semibold text-slate-800" rowspan="11">功能流程</td>
                                 <td class="px-3 py-2 font-medium text-slate-700">进件</td>
                                 <td class="px-3 py-2 text-slate-500">主申请人、担保人、CILT、Renew LOU</td>
-                                <td class="px-3 py-2 bg-blue-50/10 text-slate-800">主申请人、<strong class="text-blue-700 font-bold">担保人、CILT（新增Batch3对应流程）、Renew LOU（新增Batch3对应流程）</strong></td>
+                                <td class="px-3 py-2 bg-blue-50/10 text-slate-800">主申请人、<strong class="text-blue-700 font-bold">自雇人士、担保人、CILT（新增Batch3对应流程）、Renew LOU（新增Batch3对应流程）</strong></td>
                             </tr>
                             <tr>
                                 <td class="px-3 py-2 font-medium text-slate-700">风险</td>
@@ -200,8 +200,8 @@
                 </h4>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-[11px] text-slate-600 leading-relaxed">
                     <div class="bg-white p-2.5 rounded border border-slate-200">
-                        <strong class="text-blue-800 block mb-1">一、风控底座再重构 (核心重头戏)</strong>
-                        Batch3的核心在于重写担保人链路。涉及信用、反欺诈和CED预警引擎的入参变化，且需要同步底层改造极为繁琐的 <span class="font-semibold text-slate-800">Income & Exposure</span> 计算基础逻辑，对技术合规有着最高维度的严苛考验。
+                        <strong class="text-blue-800 block mb-1">一、新增客群风控能力 (核心要点)</strong>
+                        Batch3的核心在于因为新增担保人、自雇人士等客群，以及新增车型/场景，需要补充这些客群和场景对应的风控能力。涉及信用、反欺诈和CED预警引擎的入参变化，且需要同步底层改造极为繁琐的 <span class="font-semibold text-slate-800">Income & Exposure</span> 计算基础逻辑，对技术合规有着最高维度的严苛考验。
                     </div>
                     <div class="bg-white p-2.5 rounded border border-slate-200">
                         <strong class="text-blue-800 block mb-1">二、数字化签约与全量智能识别</strong>
