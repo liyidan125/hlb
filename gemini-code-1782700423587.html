@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FE Credit Data Platform Status - Due-Diligence</title>
+    <style>
+        :root {
+            --primary-color: #0f4c81; /* 经典企业蓝 */
+            --secondary-color: #f2f5f8;
+            --text-dark: #2c3e50;
+            --text-light: #7f8c8d;
+            --accent-color: #e74c3c;
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+            background-color: #eaeff2;
+            color: var(--text-dark);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+        }
+
+        .header-context {
+            background-color: var(--secondary-color);
+            padding: 20px;
+            border-left: 5px solid var(--primary-color);
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 30px;
+            font-size: 1.05em;
+        }
+
+        .header-context h4 {
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0a365c;
+        }
+
+        /* 手风琴折叠样式 */
+        details {
+            background: #ffffff;
+            border: 1px solid #e0e6ed;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            transition: box-shadow 0.3s;
+        }
+
+        details:hover {
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        }
+
+        summary {
+            padding: 18px 20px;
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #ffffff;
+            background-color: var(--primary-color);
+            border-radius: 8px;
+            cursor: pointer;
+            list-style: none;
+            position: relative;
+            outline: none;
+        }
+        
+        details[open] summary {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+            background-color: #0d3d68;
+        }
+
+        summary::-webkit-details-marker {
+            display: none;
+        }
+
+        summary::after {
+            content: "+";
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5em;
+        }
+
+        details[open] summary::after {
+            content: "-";
+        }
+
+        .content {
+            padding: 25px 30px;
+            background: #fafbfc;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .intent-box {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            font-size: 0.95em;
+            color: #856404;
+        }
+
+        .question-item {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed #dcdde1;
+        }
+        
+        .question-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .zh-text {
+            font-weight: 600;
+            font-size: 1.15em;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .en-text {
+            font-style: italic;
+            color: var(--text-light);
+            font-size: 1em;
+        }
+
+        /* 表格样式 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 1.05em;
+        }
+
+        th, td {
+            border: 1px solid #ced6e0;
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .glossary {
+            font-size: 0.9em;
+            color: #555;
+            background: #eee;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        @media print {
+            .controls { display: none; }
+            details[open] summary::after, summary::after { display: none; }
+            details { break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>FE Credit 数据平台建设现状调研提纲<br><span style="font-size:0.6em; color:var(--text-light); font-weight:normal;">FE Credit Data Platform Status — Due-Diligence Questionnaire</span></h1>
+
+    <div class="header-context">
+        <h4>调研目的 / Objective</h4>
+        <p>以微众银行（WeBank）零售信贷数据体系作为参考架构（benchmark），系统摸清 FE Credit 当前数据平台的现状、能力成熟度与业务支撑情况，进而诊断其核心痛点与短板，为后续平台建设/优化方案提供输入。</p>
+        
+        <h4>调研方法 / Methodology</h4>
+        <p>差距分析（Gap Analysis）—— 围绕"数据战略—架构—资产—开发—分析—质量—AI—安全—业务赋能"九大维度，每个维度先摸现状，再挖痛点，并与微众对标基线对照定位成熟度。</p>
+        
+        <h4>FEC 已知背景 / Known FEC Context</h4>
+        <p>FEC 数字客户平台已部署于 <strong>AWS 公有云</strong> (包含 Data Lake 等)。核心银行系统(T24等)位于 <strong>VPB 本地数据中心</strong>。即 FEC 已是 <strong>"AWS 公有云 Data Lake + 本地数据中心核心系统"的混合架构</strong>。</p>
+    </div>
+
+    <div class="controls">
+        <button onclick="toggleAll(true)">全部展开 / Expand All</button>
+        <button onclick="toggleAll(false)">全部折叠 / Collapse All</button>
+    </div>
+
+    <details class="dimension-card">
+        <summary>维度一：数据战略、组织与规划 / Dim 1: Data Strategy & Org</summary>
+        <div class="content">
+            <div class="intent-box">
+                <strong>诊断意图 / Diagnostic intent：</strong>判断数据工作是否"有顶层设计、专职团队、持续投入"，还是处于"需求驱动、零散建设、无人统筹"的原始状态。
+            </div>
+            <div class="question-item">
+                <div class="zh-text">1. FE Credit 是否有明确的数据战略/数据中台规划？由哪个部门（CDO/IT/业务）牵头？数据团队当前人员规模（开发、数据工程、分析师、算法）？</div>
+                <div class="en-text">EN: Does FE Credit have an explicit data strategy / data-middleware roadmap? Which function leads it? What is the current headcount of the data team?</div>
+            </div>
+            <div class="question-item">
+                <div class="zh-text">2. 数据需求目前是如何产生与排期的——业务提需求、IT 接单的"项目制"，还是有统一的数据产品规划？</div>
+                <div class="en-text">EN: How are data demands generated and prioritized today — a "project-based" model, or a unified data-product roadmap?</div>
+            </div>
+            <div class="question-item">
+                <div class="zh-text">3. 过去 2–3 年在数据平台上的主要投入与建成了哪些系统？最大的几笔投入回报如何（业务方是否真正用起来）？</div>
+                <div class="en-text">EN: What were the major data-platform investments and systems built in the past 2–3 years? What was the ROI of the largest ones?</div>
+            </div>
+            <div class="question-item">
+                <div class="zh-text">4. 当前数据工作最大的阻力和矛盾是什么——预算、人才、跨部门协同，还是业务方的信任与使用意愿？</div>
+                <div class="en-text">EN: What are the biggest frictions/contradictions in data work today?</div>
+            </div>
+            <div class="question-item">
+                <div class="zh-text">5. 监管（SBV 越南国家银行、个人信息保护）对数据治理/数据出境/本地化有哪些硬性要求？是否已成为建设的强制驱动力？</div>
+                <div class="en-text">EN: What hard regulatory requirements exist around data governance / cross-border transfer / localization?</div>
+            </div>
+        </div>
+    </details>
+
+    <details class="dimension-card">
+        <summary>维度二：数据架构、数仓分层与 Data Lake 现状 / Dim 2: Data Architecture & Lake</summary>
+        <div class="content">
+            <div class="intent-box">
+                <strong>诊断意图 / Diagnostic intent：</strong>判断 Data Lake 之上是否建立了规范的数仓分层与主题域，还是退化为"数据沼泽（data swamp）"。
+            </div>
+            <div class="question-item">
+                <div class="zh-text">6. AWS Data Lake 当前存储了哪些数据？数据格式与分区/分层策略如何？数据规模与增长？是否已出现"数据沼泽"？</div>
+                <div class="en-text">EN: What data currently lives in the AWS Data Lake? Data formats and partitioning/zone strategy? Scale and growth? Has it become a "data swamp"?</div>
+            </div>
+            <div class="question-item">
+                <div class="zh-text">7. Data Lake 之上是否已建数仓分层（ODS → DWD → DWS → ADS）？还是尚无分层加工与规范化建模？分层是否真正执行？</div>
+                <div class="en-text">EN: Is a warehouse layering built on top of the Data Lake? Or is it still only a raw Data Lake? Is the layering actually enforced?</div>
+            </div>
+            <div class="question-item">
+                <div class="zh-text">8. 数据来源与入湖：VPB 本地数据中心的核心数据（T24 Core 等）是否同步入湖？跨数据中心→云的集成链路如何？</div>
+                <div class="en-text">EN: Sources & ingestion: Is the on-prem VPB core data replicated into the lake? What is the on-prem→cloud integration link?</div>
+            </div>
+            <div class="question-item">
+                <div class="zh-text">9. 主题域如何划分？是否覆盖信贷全流程？跨产品口径是否统一？</div>
+                <div class="en-text">EN: How are subject areas partitioned? Do they cover the full credit lifecycle? Are cross-product definitions unified?</div>
+            </div>
+            <div class="question-item">
+                <div class="zh-text">10. 同一指标在云上 Data Lake、本地系统、各报表间口径是否一致？以哪一侧为准（source of truth）？分歧如何仲裁？</div>
+                <div class="en-text">EN: Is the same metric consistent across the cloud Data Lake, on-prem systems and various reports? Which side is the source of truth?</div>
+            </div>
+        </div>
+    </details>
+
+    <details class="dimension-card">
+        <summary>维度三：AWS 云上计算/存储与集成 / Dim 3: AWS Compute & Integration</summary>
+        <div class="content">
+            <div class="intent-box">
+                <strong>诊断意图 / Diagnostic intent：</strong>判断 Data Lake 的存储与计算选型是否合理，以及 AWS 云 ↔ VPB 本地之间的集成是否顺畅。
+            </div>
+            <div class="question-item">
+                <div class="zh-text">11. Data Lake 的存储与计算分别用了哪些 AWS 服务（S3, EMR, Athena, Redshift 等）？是否有明确选型理由与架构治理？</div>
+                <div class="en-text">EN: Which AWS services are used for Data Lake storage & compute? Is there a clear rationale and architecture governance?</div>
+            </div>
+            <div class="question-item">
+                <div class="zh-text">12. 是否在 S3 之上建了云数仓（Redshift）或湖仓一体？Redshift 与 S3 是分离存储还是联邦查询？是否多套引擎并行导致运维复杂？</div>
+                <div class="en-text">EN: Is a cloud warehouse (Redshift) or lakehouse built on top of S3? Are they separately stored or federated? Are redundant engines causing complexity?</div>
+            </div>
+            <div class="question-item">
+                <div class="zh-text">13. 实时计算能力如何——是否具备毫秒/秒级流处理？风控实时决策等是否已上线？实时与离线口径如何保持一致？</div>
+                <div class="en-text">EN: Real-time compute capability — is there ms/s-level stream processing? Are real-time risk decisions live? How is consistency maintained?</div>
+            </div>
+            <div class="question-item">
+                <div class="zh-text">14. 混合云数据集成：AWS 与 VPB 之间数据如何同步（专线 / VPN）？核心系统 CDC 是否准实时入湖？网络带宽与稳定性如何保障？</div>
+                <div class="en-text">EN: Hybrid-cloud integration: how is data synced between AWS and the on-prem VPB DC? Are core-system CDC ingested in near-real time?</div>
+            </div>
+            <div class="question-item">
+                <div class="zh-text">15. 调度与可观测性——跑批用什么调度？数据链路监控、产出 SLA、失败告警与重试机制？近半年是否有数据事故？</div>
+                <div class="en-text">EN: Orchestration & observability — what schedules the batches? Pipeline monitoring, SLA, alerting? Any recent data incidents?</div>
+            </div>
+        </div>
+    </details>
+
+    <details class="dimension-card">
+        <summary>维度四：数据资产管理体系 / Dim 4: Data Asset Management</summary>
+        <div class="content">
+            <div class="intent-box">
+                <strong>诊断意图 / Diagnostic intent：</strong>判断数据是否"可见、可找、可用、可管"，还是"重复建设、找数难、无台账"。
+            </div>
+            <div class="question-item">
+                <div class="zh-text">16. FE Credit 是否有数据资产目录/元数据管理平台？全行数据资产是否已盘点？</div>
+                <div class="en-text">EN: Does FE Credit have a data-asset catalog / metadata-management platform? Has a bank-wide inventory been done?</div>
+            </div>
+            <div class="question-item">
+                <div class="zh-text">17. 数据血缘（从源头到报表的字段级血缘）是否已建立？影响分析能否做到？</div>
+                <div class="en-text">EN: Is field-level data lineage established? Can impact analysis be performed?</div>
+            </div>
+            <div class="question-item">
+                <div class="zh-text">18. 指标/标签是否有统一的命名规范、业务定义、Owner 与审批流程？是否存在大量口径冲突？</div>
+                <div class="en-text">EN: Do metrics/tags have unified naming conventions, definitions, owners and workflows? Are there definition conflicts?</div>
+            </div>
+            <div class="question-item">
+                <div class="zh-text">19. 数据资产的使用情况是否可度量？是否有资产下发的服务化机制？</div>
+                <div class="en-text">EN: Is asset usage measurable? Is there a service-based asset-distribution mechanism?</div>
+            </div>
+            <div class="question-item">
+                <div class="zh-text">20. 当前"找数、懂数、用数"的体验如何——平均要多久？主要卡点在哪？</div>
+                <div class="en-text">EN: How is the "find/understand/use data" experience today? Where is the main bottleneck?</div>
+            </div>
+        </div>
+    </details>
+
+    <details class="dimension-card">
+        <summary>维度五：标签与风控变量加工平台 / Dim 5: Tag & Risk-Variable Platform</summary>
+        <div class="content">
+            <div class="intent-box">
+                <strong>诊断意图 / Diagnostic intent：</strong>判断风控变量/标签是"集中化、配置化、可复用"，还是"硬编码、重复造轮子、上线慢"。
+            </div>
+            <div class="question-item">
+                <div class="zh-text">21. 风控变量（features）/标签目前是如何开发的——纯代码 IT 开发，还是业务可自助配置？是否存在低代码能力？</div>
+                <div class="en-text">EN: How are risk variables developed today — pure code by IT, or self-service config? Is there low-code capability?</div>
+            </div>
+            <div class="question-item">
+                <div class="zh-text">22. 从一个新变量"提出需求→开发→验证→上线"平均要多久？瓶颈在哪？</div>
+                <div class="en-text">EN: Average time from a new variable "request → develop → validate → go-live"? Where is the bottleneck?</div>
+            </div>
+            <div class="question-item">
+                <div class="zh-text">23. 变量加工是否有可复用的算子库？是否有图谱变量加工能力与关系网络数据建设？</div>
+                <div class="en-text">EN: Is there a reusable operator library? Is there graph-variable engineering and relationship-network data?</div>
+            </div>
+            <div class="question-item">
+                <div class="zh-text">24. 变量的"分析态"与"生产态"是否分离？上线前是否有样本比对验证机制？</div>
+                <div class="en-text">EN: Are the "analysis mode" and "production mode" of variables separated? Is there sample-comparison validation?</div>
+            </div>
+            <div class="question-item">
+                <div class="zh-text">25. 变量/标签是否做到"一处定义、多处使用"？还是口径漂移？支持不同时效灵活联结吗？</div>
+                <div class="en-text">EN: Do variables achieve "define once, use everywhere"? Timeliness management supported?</div>
+            </div>
+        </div>
+    </details>
+
+    <details class="dimension-card">
+        <summary>维度六：外部数据源管理 / Dim 6: External Data Source Management</summary>
+        <div class="content">
+            <div class="intent-box">
+                <strong>诊断意图 / Diagnostic intent：</strong>判断外部数据是"统一接入、标准化、可计费、稳定可控"，还是"字段混乱、成本失控"。
+            </div>
+            <div class="question-item">
+                <div class="zh-text">26. 目前接入了多少家外部数据源？接入新数据源平均要多久？流程是否配置化？</div>
+                <div class="en-text">EN: How many external data sources are currently integrated? Average onboarding time? Is it config-driven?</div>
+            </div>
+            <div class="question-item">
+                <div class="zh-text">27. 外部数据是否做了标准化转换（统一 JSON/字段类型）？</div>
+                <div class="en-text">EN: Has external data been standardized (unified JSON, unified field types)?</div>
+            </div>
+            <div class="question-item">
+                <div class="zh-text">28. 外部数据链路的稳定性保障机制——并发、降级熔断、查得率/错误码监控是否具备？</div>
+                <div class="en-text">EN: Stability safeguards — concurrency control, circuit-breaker, hit-rate/error-code monitoring?</div>
+            </div>
+            <div class="question-item">
+                <div class="zh-text">29. 外部数据的计费与成本管理——是否有缓存/查得率优化？单客成本可追踪吗？</div>
+                <div class="en-text">EN: Billing & cost management — caching / hit-rate optimization? Is per-customer cost traceable?</div>
+            </div>
+            <div class="question-item">
+                <div class="zh-text">30. 风险策略的入参管理——是否统一管理？映射是否可配置？加密合规是否落实？</div>
+                <div class="en-text">EN: Management of risk-strategy input parameters — unified? Configurable mapping? Encryption implemented?</div>
+            </div>
+        </div>
+    </details>
+
+    <details class="dimension-card">
+        <summary>维度七至十一：自助分析、质量、AI、安全与业务赋能 / Dim 7-11: BI, DQ, AI, Sec & Biz Value</summary>
+        <div class="content">
+            <div class="intent-box">
+                <strong>综合诊断意图：</strong>评估数据应用层的敏捷度、质量闭环、AI 探索阶段、云环境合规性（重点评估越南 PDPD），以及业务部门的真实体感。
+            </div>
+            
+            <h4 style="color:var(--primary-color);">维度七：自助分析与 BI</h4>
+            <div class="question-item">
+                <div class="zh-text">报表用什么工具？是 IT 定制开发为主，还是业务可自助拖拽分析？结果支持多端展示吗？需求积压情况如何？</div>
+                <div class="en-text">EN: BI tools used? Custom-built vs Self-service? Multi-channel support? Request backlog?</div>
+            </div>
+
+            <h4 style="color:var(--primary-color);">维度八：数据质量与治理</h4>
+            <div class="question-item">
+                <div class="zh-text">是否有监控（完整性/准确性）与闭环流程（Owner/根因复盘）？主数据是否统一管理？标准是否落地执行？</div>
+                <div class="en-text">EN: DQ monitoring and closed-loop process? Master data centralized? Standards enforced?</div>
+            </div>
+
+            <h4 style="color:var(--primary-color);">维度九：AI 与智能化赋能</h4>
+            <div class="question-item">
+                <div class="zh-text">算法模型落地了哪些场景？是否有"智能问数"或 RPA 数字员工？大模型（LLM）是否有探索？主要阻碍是什么？</div>
+                <div class="en-text">EN: ML deployment scenarios? NL-Q&A or RPA? LLM exploration? Biggest AI blocker?</div>
+            </div>
+
+            <h4 style="color:var(--primary-color);">维度十：云安全、隐私合规与云成本（重点）</h4>
+            <div class="question-item">
+                <div class="zh-text">AWS Region 在境内还是境外？是否符合越南 PDPD（Decree 13）数据出境与本地化要求？S3 敏感数据加密与细粒度访问控制是否落地？IAM 审计与月度云成本（FinOps）现状？</div>
+                <div class="en-text">EN: AWS Region? Compliant with Vietnam PDPD (Decree 13) for cross-border? S3 encryption & FGAC? IAM audit & monthly cloud FinOps?</div>
+            </div>
+
+            <h4 style="color:var(--primary-color);">维度十一：业务场景赋能价值验证</h4>
+            <div class="question-item">
+                <div class="zh-text">数据在风控（不良率改善）、营销（获客转化）、催收（催回率）、运营中发挥了多大作用？业务一号位如何打分及核心诉求是什么？</div>
+                <div class="en-text">EN: Value delivered in Risk, Marketing, Collections, Ops? CEO perspective score & Top 3 desired outcomes?</div>
+            </div>
+        </div>
+    </details>
+
+    <h2 style="margin-top:40px; color:var(--primary-color);">附：关键量化对标速查表 / Quantitative Benchmark</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>能力指标 / Capability</th>
+                <th>微众参考基线 / WeBank Baseline</th>
+                <th>FE Credit 现状 / Current</th>
+                <th>差距/成熟度 / Gap / Maturity</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>数据总量 / 日增量 / Total / Daily growth</td><td>10.5 PB / 75 TB</td><td></td><td></td></tr>
+            <tr><td>核心表 DWD / DWS 数量 / Core tables</td><td>3600+ / 1700+</td><td></td><td></td></tr>
+            <tr><td>数据资产规模 / Asset scale</td><td>A 1000+ / B 9000+ / C 8000+</td><td></td><td></td></tr>
+            <tr><td>外部数据源数量 / 接入周期 / Sources</td><td>200+ / ≤15 天 / days</td><td></td><td></td></tr>
+            <tr><td>风控算子库 / 图谱能力 / Risk ops</td><td>220+ / 图仓 / graph warehouse</td><td></td><td></td></tr>
+            <tr><td>自助分析月活 / Self-service usage</td><td>22000+ 点击/30 天 / clicks</td><td></td><td></td></tr>
+            <tr><td>AWS Data Lake 存储与计算栈</td><td>—</td><td></td><td>S3 / LF / EMR / Redshift</td></tr>
+            <tr><td>AWS 数据出境合规 / PDPD Compliance</td><td>—</td><td></td><td>境内/出境情况</td></tr>
+        </tbody>
+    </table>
+
+    <details class="dimension-card">
+        <summary>开放性总结问题 (收尾用) / Wrap-up Questions</summary>
+        <div class="content">
+            <ul>
+                <li class="question-item"><span class="zh-text">如果让你用三句话描述 FE Credit 数据平台的现状，你会怎么说？</span><br><span class="en-text">In three sentences, how would you describe the current state of FE Credit's data platform?</span></li>
+                <li class="question-item"><span class="zh-text">过去一年，数据相关最让你头疼的三件事是什么？</span><br><span class="en-text">Over the past year, what are the top three data-related things that gave you the most headaches?</span></li>
+                <li class="question-item"><span class="zh-text">如果未来一年只能重点做三件事来提升数据平台，你会选哪三件？为什么？</span><br><span class="en-text">If you could focus on three things next year, what would they be and why?</span></li>
+                <li class="question-item"><span class="zh-text">你认为微众这套架构里，哪一部分对 FE Credit 最有借鉴价值？哪一部分短期内最难落地？</span><br><span class="en-text">Which part of WeBank's architecture is most worth borrowing? Which is hardest to land?</span></li>
+            </ul>
+        </div>
+    </details>
+
+    <div class="glossary">
+        <strong>专业术语参考 (Glossary)：</strong>
+        ODS (Source replica), DWD (Detail), DWS (Summary), ADS (Application) | 
+        SBV (State Bank of Vietnam) | PDPD (Personal Data Protection Decree 13/2023) | 
+        Lake Formation (FGAC 细粒度访问控制) | CDC (变更数据捕获) | DX (AWS Direct Connect) | FinOps (云财务运营)
+    </div>
+
+</div>
+
+<script>
+    function toggleAll(expand) {
+        const detailsElements = document.querySelectorAll('details');
+        detailsElements.forEach(detail => {
+            if (expand) {
+                detail.setAttribute('open', '');
+            } else {
+                detail.removeAttribute('open');
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
