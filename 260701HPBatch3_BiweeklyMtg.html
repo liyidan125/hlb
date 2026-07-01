@@ -1,0 +1,3005 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HP Individual Batch3 项目需求完善度分析</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --brand-primary: #1E3A8A; /* Deep Blue */
+            --brand-secondary: #0F172A; /* Slate 900 */
+            --accent: #2563EB; /* Blue 600 */
+            --success: #10B981; /* Emerald 500 */
+            --warning: #F59E0B; /* Amber 500 */
+            --danger: #EF4444; /* Red 500 */
+            --bg-page: #F8FAFC; /* Slate 50 */
+            --bg-card: #FFFFFF;
+            --border-light: #E2E8F0; /* Slate 200 */
+            --text-main: #334155; /* Slate 700 */
+            --text-muted: #64748B; /* Slate 500 */
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            margin: 0;
+            padding: 2rem;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--brand-secondary), var(--brand-primary));
+            color: white;
+            padding: 2rem 2.5rem;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: 0.025em;
+        }
+        
+        .header p {
+            margin: 0.5rem 0 0 0;
+            color: #CBD5E1; /* Slate 300 */
+            font-size: 0.95rem;
+        }
+
+        .content {
+            padding: 2rem 2.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-light);
+            border-right: 1px solid var(--border-light);
+        }
+
+        th:last-child, td:last-child {
+            border-right: none;
+        }
+
+        thead {
+            background-color: #F1F5F9; /* Slate 100 */
+        }
+
+        th {
+            font-weight: 600;
+            color: var(--brand-secondary);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .col-group {
+            text-align: center;
+        }
+
+        tbody tr:hover td.cell-hoverable {
+            background-color: #F8FAFC;
+        }
+
+        .category-cell {
+            background-color: #FFFFFF;
+            font-weight: 700;
+            color: var(--brand-primary);
+            vertical-align: middle;
+            border-right: 2px solid var(--border-light);
+        }
+
+        .metric-cell {
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
+        
+        .rate-cell {
+            width: 140px;
+        }
+
+        /* Progress Bar Styles */
+        .progress-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .progress-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            min-width: 45px;
+            text-align: right;
+        }
+
+        .progress-bar-container {
+            flex-grow: 1;
+            height: 6px;
+            background-color: var(--border-light);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 999px;
+            transition: width 0.3s ease;
+        }
+
+        .fill-success { background-color: var(--success); }
+        .fill-warning { background-color: var(--warning); }
+        .fill-danger { background-color: var(--danger); }
+        .fill-empty { background-color: transparent; }
+
+        .total-row {
+            background-color: #F8FAFC;
+            font-weight: 700;
+        }
+
+        .total-row td {
+            border-top: 2px solid var(--border-light);
+        }
+        
+
+        /* Summary Grid Styles */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-card {
+            background-color: var(--bg-page);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border-top: 4px solid var(--brand-primary);
+        }
+
+        .stat-card.success { border-top-color: var(--success); }
+        .stat-card.warning { border-top-color: var(--warning); }
+        .stat-card.danger { border-top-color: var(--danger); }
+        .stat-card.empty { border-top-color: var(--text-muted); }
+
+        .stat-title {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            font-variant-numeric: tabular-nums;
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+        }
+        
+        .stat-value span {
+            font-size: 1rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        
+        .stat-value.color-primary { color: var(--brand-primary); }
+        .stat-value.color-success { color: var(--success); }
+        .stat-value.color-warning { color: var(--warning); }
+        .stat-value.color-danger { color: var(--danger); }
+        .stat-value.color-empty { color: var(--text-muted); }
+
+        .stat-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            background-color: #FFFFFF;
+            padding: 4px 12px;
+            border-radius: 999px;
+            border: 1px solid var(--border-light);
+            margin-top: 0.5rem;
+        }
+
+        .category-subtotal {
+            background-color: #F8FAFC;
+            font-weight: 600;
+        }
+
+        /* Chart Container Styles */
+        .chart-container-wrapper {
+            background-color: #FFFFFF;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 400px;
+            width: 80%;
+        }
+
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>HP Individual Batch3 项目需求完善度分析</h1>
+            <p>基于核心业务模块与一级功能点的深度状态追踪（含业务责任人负荷分布）</p>
+        </div>
+        
+        <div class="content">
+
+            <div class="summary-grid">
+                <div class="stat-card">
+                    <div class="stat-title">需求范围功能点总数</div>
+                    <div class="stat-value color-primary">331<span>项</span></div>
+                    <div class="stat-subtitle">包含一二级细分项</div>
+                </div>
+                <div class="stat-card success">
+                    <div class="stat-title">需求初稿完成度</div>
+                    <div class="stat-value color-success">94.3<span>%</span></div>
+                    <div class="stat-subtitle">已完成初稿: 312 项</div>
+                </div>
+                <div class="stat-card warning">
+                    <div class="stat-title">User确认完成度</div>
+                    <div class="stat-value color-warning">72.2<span>%</span></div>
+                    <div class="stat-subtitle">业务已确认: 239 项</div>
+                </div>
+                <div class="stat-card empty">
+                    <div class="stat-title">需求评审通过率</div>
+                    <div class="stat-value color-empty">0.0<span>%</span></div>
+                    <div class="stat-subtitle">已评审通过: 0 项</div>
+                </div>
+            </div>
+            
+            <h3 style="margin-bottom: 1rem; color: var(--brand-secondary); font-size: 1.1rem; border-left: 4px solid var(--accent); padding-left: 10px;">细分领域交付矩阵</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th rowspan="2" style="width: 16%;">需求分类</th>
+                        <th rowspan="2" style="width: 20%;">一级功能点</th>
+                        <th rowspan="2" class="metric-cell" style="width: 8%;">任务总数</th>
+                        <th colspan="2" class="col-group">需求初稿状态</th>
+                        <th colspan="2" class="col-group">User确认状态</th>
+                        <th colspan="2" class="col-group">需求评审状态</th>
+                    </tr>
+                    <tr>
+                        <th class="metric-cell" style="width: 7%;">完成数</th>
+                        <th class="rate-cell">完成率</th>
+                        <th class="metric-cell" style="width: 7%;">完成数</th>
+                        <th class="rate-cell">完成率</th>
+                        <th class="metric-cell" style="width: 7%;">完成数</th>
+                        <th class="rate-cell">完成率</th>
+                    </tr>
+                </thead>
+                <tbody>
+<tr>
+<td rowspan="4" class="category-cell">AI OCR</td>
+<td class="cell-hoverable">CRA Document</td>
+<td class="cell-hoverable metric-cell">40</td>
+<td class="cell-hoverable metric-cell">40</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Vhicle Document</td>
+<td class="cell-hoverable metric-cell">6</td>
+<td class="cell-hoverable metric-cell">6</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Seller</td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Guarantor</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr class="category-subtotal">
+        <td colspan="2" style="text-align: right; padding-right: 16px; color: var(--text-muted); font-size: 0.85em;">AI OCR - 小计</td>
+        <td class="metric-cell">49</td>
+        <td class="metric-cell">49</td>
+        <td class="rate-cell"><div class="progress-wrapper"><div class="progress-bar-container"><div class="progress-bar-fill fill-success" style="width: 100.0%;"></div></div><div class="progress-label">100.0%</div></div></td>
+        <td class="metric-cell">0</td>
+        <td class="rate-cell"><div class="progress-wrapper"><div class="progress-bar-container"><div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div></div><div class="progress-label">0.0%</div></div></td>
+        <td class="metric-cell">0</td>
+        <td class="rate-cell"><div class="progress-wrapper"><div class="progress-bar-container"><div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div></div><div class="progress-label">0.0%</div></div></td>
+    </tr><tr>
+<td rowspan="15" class="category-cell">信贷评估CED & FMU</td>
+<td class="cell-hoverable">CED/FMU Screen</td>
+<td class="cell-hoverable metric-cell">13</td>
+<td class="cell-hoverable metric-cell">12</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 92.3%;"></div>
+                </div>
+                <div class="progress-label">92.3%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">9</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-warning" style="width: 69.2%;"></div>
+                </div>
+                <div class="progress-label">69.2%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">2.2 Task Queue & staff management</td>
+<td class="cell-hoverable metric-cell">9</td>
+<td class="cell-hoverable metric-cell">9</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">9</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">2.3 Workflow</td>
+<td class="cell-hoverable metric-cell">7</td>
+<td class="cell-hoverable metric-cell">6</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-warning" style="width: 85.7%;"></div>
+                </div>
+                <div class="progress-label">85.7%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-danger" style="width: 28.6%;"></div>
+                </div>
+                <div class="progress-label">28.6%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">2.4.10 Income</td>
+<td class="cell-hoverable metric-cell">4</td>
+<td class="cell-hoverable metric-cell">4</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">3</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-warning" style="width: 75.0%;"></div>
+                </div>
+                <div class="progress-label">75.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">2.4.17 Log</td>
+<td class="cell-hoverable metric-cell">3</td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-warning" style="width: 66.7%;"></div>
+                </div>
+                <div class="progress-label">66.7%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-warning" style="width: 66.7%;"></div>
+                </div>
+                <div class="progress-label">66.7%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">2.1 Parameter</td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-warning" style="width: 50.0%;"></div>
+                </div>
+                <div class="progress-label">50.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-warning" style="width: 50.0%;"></div>
+                </div>
+                <div class="progress-label">50.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Anti fraud Engine Invoking</td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">CED prompt Engine Invoking</td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-warning" style="width: 50.0%;"></div>
+                </div>
+                <div class="progress-label">50.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">RIsk Engine Invoking -UW</td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">2.4.11 Exposure</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">2.4.8 TV Check</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">3.5 Intergration CDPS (CCRIS CTOS Inquiry)</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">AML check(Siron)</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Data inquiry</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">RIsk Engine Invoking -AIP & Credit Review & Hard Rules&Pre screen&Re run</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr class="category-subtotal">
+        <td colspan="2" style="text-align: right; padding-right: 16px; color: var(--text-muted); font-size: 0.85em;">信贷评估CED & FMU - 小计</td>
+        <td class="metric-cell">50</td>
+        <td class="metric-cell">45</td>
+        <td class="rate-cell"><div class="progress-wrapper"><div class="progress-bar-container"><div class="progress-bar-fill fill-success" style="width: 90.0%;"></div></div><div class="progress-label">90.0%</div></div></td>
+        <td class="metric-cell">34</td>
+        <td class="rate-cell"><div class="progress-wrapper"><div class="progress-bar-container"><div class="progress-bar-fill fill-warning" style="width: 68.0%;"></div></div><div class="progress-label">68.0%</div></div></td>
+        <td class="metric-cell">0</td>
+        <td class="rate-cell"><div class="progress-wrapper"><div class="progress-bar-container"><div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div></div><div class="progress-label">0.0%</div></div></td>
+    </tr><tr>
+<td rowspan="5" class="category-cell">用户管理UM</td>
+<td class="cell-hoverable">User & role & permission Management</td>
+<td class="cell-hoverable metric-cell">5</td>
+<td class="cell-hoverable metric-cell">5</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">5</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Delaer Management Team</td>
+<td class="cell-hoverable metric-cell">4</td>
+<td class="cell-hoverable metric-cell">4</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">4</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">User Login</td>
+<td class="cell-hoverable metric-cell">3</td>
+<td class="cell-hoverable metric-cell">3</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">3</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">configuration on sales and product team</td>
+<td class="cell-hoverable metric-cell">3</td>
+<td class="cell-hoverable metric-cell">3</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">3</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Sales Team</td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr class="category-subtotal">
+        <td colspan="2" style="text-align: right; padding-right: 16px; color: var(--text-muted); font-size: 0.85em;">用户管理UM - 小计</td>
+        <td class="metric-cell">17</td>
+        <td class="metric-cell">17</td>
+        <td class="rate-cell"><div class="progress-wrapper"><div class="progress-bar-container"><div class="progress-bar-fill fill-success" style="width: 100.0%;"></div></div><div class="progress-label">100.0%</div></div></td>
+        <td class="metric-cell">17</td>
+        <td class="rate-cell"><div class="progress-wrapper"><div class="progress-bar-container"><div class="progress-bar-fill fill-success" style="width: 100.0%;"></div></div><div class="progress-label">100.0%</div></div></td>
+        <td class="metric-cell">0</td>
+        <td class="rate-cell"><div class="progress-wrapper"><div class="progress-bar-container"><div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div></div><div class="progress-label">0.0%</div></div></td>
+    </tr><tr>
+<td rowspan="22" class="category-cell">签约放款Acceptance & Disbursement</td>
+<td class="cell-hoverable">STP (直通处理)</td>
+<td class="cell-hoverable metric-cell">9</td>
+<td class="cell-hoverable metric-cell">9</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">9</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">担保人 (Guarantor)</td>
+<td class="cell-hoverable metric-cell">9</td>
+<td class="cell-hoverable metric-cell">9</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">9</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Acceptanace</td>
+<td class="cell-hoverable metric-cell">6</td>
+<td class="cell-hoverable metric-cell">6</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">6</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">专家规则检查 (Expert Rule Check)</td>
+<td class="cell-hoverable metric-cell">5</td>
+<td class="cell-hoverable metric-cell">5</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">5</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">二手车 (Used Car)</td>
+<td class="cell-hoverable metric-cell">5</td>
+<td class="cell-hoverable metric-cell">5</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">5</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">AIOCR (智能文字识别)</td>
+<td class="cell-hoverable metric-cell">4</td>
+<td class="cell-hoverable metric-cell">4</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">4</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">E-acceptance</td>
+<td class="cell-hoverable metric-cell">4</td>
+<td class="cell-hoverable metric-cell">4</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">E-acceptance (电子接受)</td>
+<td class="cell-hoverable metric-cell">3</td>
+<td class="cell-hoverable metric-cell">3</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">3</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">flow</td>
+<td class="cell-hoverable metric-cell">3</td>
+<td class="cell-hoverable metric-cell">3</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">复新车 (Recond Car)</td>
+<td class="cell-hoverable metric-cell">3</td>
+<td class="cell-hoverable metric-cell">3</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">3</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">CILT</td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Dealer Management</td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">E-Hakmilik</td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">LOU Renewal</td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Report</td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Manual</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">体验优化</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">参数配置</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">文书模板使用</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">文书配置</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">文件管理</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">短信、邮件配置</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr class="category-subtotal">
+        <td colspan="2" style="text-align: right; padding-right: 16px; color: var(--text-muted); font-size: 0.85em;">签约放款Acceptance & Disbursement - 小计</td>
+        <td class="metric-cell">68</td>
+        <td class="metric-cell">65</td>
+        <td class="rate-cell"><div class="progress-wrapper"><div class="progress-bar-container"><div class="progress-bar-fill fill-success" style="width: 95.6%;"></div></div><div class="progress-label">95.6%</div></div></td>
+        <td class="metric-cell">57</td>
+        <td class="rate-cell"><div class="progress-wrapper"><div class="progress-bar-container"><div class="progress-bar-fill fill-warning" style="width: 83.8%;"></div></div><div class="progress-label">83.8%</div></div></td>
+        <td class="metric-cell">0</td>
+        <td class="rate-cell"><div class="progress-wrapper"><div class="progress-bar-container"><div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div></div><div class="progress-label">0.0%</div></div></td>
+    </tr><tr>
+<td rowspan="6" class="category-cell">车商管理Dealer Management</td>
+<td class="cell-hoverable">Dealer Empanelment</td>
+<td class="cell-hoverable metric-cell">10</td>
+<td class="cell-hoverable metric-cell">10</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">10</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Annual Review</td>
+<td class="cell-hoverable metric-cell">6</td>
+<td class="cell-hoverable metric-cell">6</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">6</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Dealer API</td>
+<td class="cell-hoverable metric-cell">3</td>
+<td class="cell-hoverable metric-cell">3</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Dealer Database</td>
+<td class="cell-hoverable metric-cell">3</td>
+<td class="cell-hoverable metric-cell">3</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">3</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Dealer Management</td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Mantainance</td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr class="category-subtotal">
+        <td colspan="2" style="text-align: right; padding-right: 16px; color: var(--text-muted); font-size: 0.85em;">车商管理Dealer Management - 小计</td>
+        <td class="metric-cell">26</td>
+        <td class="metric-cell">26</td>
+        <td class="rate-cell"><div class="progress-wrapper"><div class="progress-bar-container"><div class="progress-bar-fill fill-success" style="width: 100.0%;"></div></div><div class="progress-label">100.0%</div></div></td>
+        <td class="metric-cell">23</td>
+        <td class="rate-cell"><div class="progress-wrapper"><div class="progress-bar-container"><div class="progress-bar-fill fill-warning" style="width: 88.5%;"></div></div><div class="progress-label">88.5%</div></div></td>
+        <td class="metric-cell">0</td>
+        <td class="rate-cell"><div class="progress-wrapper"><div class="progress-bar-container"><div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div></div><div class="progress-label">0.0%</div></div></td>
+    </tr><tr>
+<td rowspan="29" class="category-cell">销售进件Sales</td>
+<td class="cell-hoverable">Sales Data Entry( New Application)</td>
+<td class="cell-hoverable metric-cell">14</td>
+<td class="cell-hoverable metric-cell">10</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-warning" style="width: 71.4%;"></div>
+                </div>
+                <div class="progress-label">71.4%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">10</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-warning" style="width: 71.4%;"></div>
+                </div>
+                <div class="progress-label">71.4%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Sales Workflow</td>
+<td class="cell-hoverable metric-cell">14</td>
+<td class="cell-hoverable metric-cell">12</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-warning" style="width: 85.7%;"></div>
+                </div>
+                <div class="progress-label">85.7%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">12</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-warning" style="width: 85.7%;"></div>
+                </div>
+                <div class="progress-label">85.7%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Application Status Control</td>
+<td class="cell-hoverable metric-cell">13</td>
+<td class="cell-hoverable metric-cell">12</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 92.3%;"></div>
+                </div>
+                <div class="progress-label">92.3%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">12</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 92.3%;"></div>
+                </div>
+                <div class="progress-label">92.3%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Data Entry</td>
+<td class="cell-hoverable metric-cell">11</td>
+<td class="cell-hoverable metric-cell">8</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-warning" style="width: 72.7%;"></div>
+                </div>
+                <div class="progress-label">72.7%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">8</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-warning" style="width: 72.7%;"></div>
+                </div>
+                <div class="progress-label">72.7%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Case Handle</td>
+<td class="cell-hoverable metric-cell">8</td>
+<td class="cell-hoverable metric-cell">8</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">8</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Price Approval</td>
+<td class="cell-hoverable metric-cell">7</td>
+<td class="cell-hoverable metric-cell">7</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">7</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Consent</td>
+<td class="cell-hoverable metric-cell">5</td>
+<td class="cell-hoverable metric-cell">5</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">5</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Vehicle database</td>
+<td class="cell-hoverable metric-cell">5</td>
+<td class="cell-hoverable metric-cell">5</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">4</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-warning" style="width: 80.0%;"></div>
+                </div>
+                <div class="progress-label">80.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Application Detail Page</td>
+<td class="cell-hoverable metric-cell">4</td>
+<td class="cell-hoverable metric-cell">3</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-warning" style="width: 75.0%;"></div>
+                </div>
+                <div class="progress-label">75.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">3</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-warning" style="width: 75.0%;"></div>
+                </div>
+                <div class="progress-label">75.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Dealer Annual Review</td>
+<td class="cell-hoverable metric-cell">4</td>
+<td class="cell-hoverable metric-cell">4</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">4</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Dealer Empanelment</td>
+<td class="cell-hoverable metric-cell">4</td>
+<td class="cell-hoverable metric-cell">4</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">4</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Pricing Workflow</td>
+<td class="cell-hoverable metric-cell">4</td>
+<td class="cell-hoverable metric-cell">4</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">4</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Special Case</td>
+<td class="cell-hoverable metric-cell">4</td>
+<td class="cell-hoverable metric-cell">4</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">4</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Application</td>
+<td class="cell-hoverable metric-cell">3</td>
+<td class="cell-hoverable metric-cell">3</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">3</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Application Case Pool</td>
+<td class="cell-hoverable metric-cell">3</td>
+<td class="cell-hoverable metric-cell">3</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">3</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Vhicle Type</td>
+<td class="cell-hoverable metric-cell">3</td>
+<td class="cell-hoverable metric-cell">3</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">3</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Applicant</td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Lending Type</td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">2</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Campaign</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Customer Type</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Email</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Greenlane</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Package/Product</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Pricing Rules</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Product Type</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">Purchase From</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">SMS</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">template</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr>
+<td class="cell-hoverable">销售团队报表</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable metric-cell">1</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-success" style="width: 100.0%;"></div>
+                </div>
+                <div class="progress-label">100.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+<td class="cell-hoverable metric-cell">0</td>
+<td class="cell-hoverable rate-cell">
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div>
+                </div>
+                <div class="progress-label">0.0%</div>
+            </div>
+        </td>
+</tr>
+<tr class="category-subtotal">
+        <td colspan="2" style="text-align: right; padding-right: 16px; color: var(--text-muted); font-size: 0.85em;">销售进件Sales - 小计</td>
+        <td class="metric-cell">121</td>
+        <td class="metric-cell">110</td>
+        <td class="rate-cell"><div class="progress-wrapper"><div class="progress-bar-container"><div class="progress-bar-fill fill-success" style="width: 90.9%;"></div></div><div class="progress-label">90.9%</div></div></td>
+        <td class="metric-cell">108</td>
+        <td class="rate-cell"><div class="progress-wrapper"><div class="progress-bar-container"><div class="progress-bar-fill fill-warning" style="width: 89.3%;"></div></div><div class="progress-label">89.3%</div></div></td>
+        <td class="metric-cell">0</td>
+        <td class="rate-cell"><div class="progress-wrapper"><div class="progress-bar-container"><div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div></div><div class="progress-label">0.0%</div></div></td>
+    </tr>
+                    <tr class="total-row">
+                        <td colspan="2" style="text-align: right; padding-right: 16px;">全局总计</td>
+                        <td class="metric-cell">331</td>
+                        <td class="metric-cell">312</td>
+                        <td class="rate-cell">
+                            <div class="progress-wrapper">
+                                <div class="progress-bar-container"><div class="progress-bar-fill fill-success" style="width: 94.3%;"></div></div>
+                                <div class="progress-label" style="color: var(--brand-primary);">94.3%</div>
+                            </div>
+                        </td>
+                        <td class="metric-cell">239</td>
+                        <td class="rate-cell">
+                            <div class="progress-wrapper">
+                                <div class="progress-bar-container"><div class="progress-bar-fill fill-warning" style="width: 72.2%;"></div></div>
+                                <div class="progress-label" style="color: var(--brand-primary);">72.2%</div>
+                            </div>
+                        </td>
+                        <td class="metric-cell">0</td>
+                        <td class="rate-cell">
+                            <div class="progress-wrapper">
+                                <div class="progress-bar-container"><div class="progress-bar-fill fill-empty" style="width: 0.0%;"></div></div>
+                                <div class="progress-label" style="color: var(--brand-primary);">0.0%</div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 class="section-title">业务责任人负荷分布 (二级功能点维度)</h3>
+            <div class="chart-container-wrapper">
+                <div class="chart-container">
+                    <canvas id="ownerPieChart"></canvas>
+                </div>
+            </div>    
+                        
+        </div>
+    </div>
+
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const ctx = document.getElementById('ownerPieChart').getContext('2d');
+            
+            // 数据源设置
+            const labels = [
+                '李斌', '晓宇', '张皓', '绍恒', '肖力', 
+                '待定', '李斌/紫莹', '紫莹', '张文/绍恒', 
+                '卓文', '紫莹/卓文', '晓宇/肖力', '肖力/绍恒', '协同'
+            ];
+            const dataValues = [150, 66, 55, 20, 11, 11, 4, 3, 3, 2, 2, 2, 1, 1];
+            
+            // 渐变蓝/专业调色板
+            const backgroundColors = [
+                '#1E3A8A', '#2563EB', '#3B82F6', '#60A5FA', '#93C5FD', 
+                '#9CA3AF', '#F59E0B', '#FBBF24', '#FCD34D', 
+                '#10B981', '#34D399', '#6EE7B7', '#EF4444', '#F87171'
+            ];
+
+            const pieData = {
+                labels: labels,
+                datasets: [{
+                    data: dataValues,
+                    backgroundColor: backgroundColors,
+                    borderWidth: 1,
+                    borderColor: '#FFFFFF',
+                    hoverOffset: 6 // 悬停时的放大效果
+                }]
+            };
+
+            const config = {
+                type: 'pie',
+                data: pieData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right', // 标签放置在饼图右侧
+                            labels: {
+                                font: {
+                                    family: 'system-ui, -apple-system, sans-serif',
+                                    size: 13
+                                },
+                                padding: 20
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                            titleFont: { size: 14 },
+                            bodyFont: { size: 14 },
+                            padding: 12,
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    const value = context.parsed;
+                                    // 自动计算当前区块的百分比
+                                    const total = context.dataset.data.reduce((acc, curr) => acc + curr, 0);
+                                    const percentage = ((value / total) * 100).toFixed(1) + '%';
+                                    return label + value + ' 项 (' + percentage + ')';
+                                }
+                            }
+                        }
+                    },
+                    layout: {
+                        padding: {
+                            top: 10,
+                            bottom: 10
+                        }
+                    }
+                }
+            };
+
+            // 渲染图表
+            new Chart(ctx, config);
+        });
+    </script>
+
+</body>
+</html>
